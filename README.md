@@ -40,6 +40,22 @@ Two details make it safe:
 
 Why the LLM boundary instead of `agent/request-error`: the Agent loop fixes one `ModelSelection` per step (`step()` passes `decision.selection` to every retry), so changing `agent.model.select()` inside a request-error listener cannot change the model of the retry it asks for. `llm/stream` is the documented routing seam and runs after the loop has logged the request.
 
+## Screenshots
+
+> Captured from the DeepSeek Harness Web GUI; these show the v1.0.0 global settings page and the Session fallback page inside the model selection card.
+
+### Global settings page
+
+![Fallback models settings page](docs/screenshots/settings-page.png)
+
+Maintain the global default chain, its switch, the fallback budget, and skipped failure codes in **Settings → Fallback models**.
+
+### Model selection card
+
+![Fallback page inside the model selection card](docs/screenshots/model-menu.png)
+
+The model selector is the single entry point: the switch at the top of the card chooses between the shipped model page and the fallback page. When enabled, the first model in the list is the primary and later models take over a failed request in order; the circular-arrow button resets the Session to the global configuration.
+
 ## Installation
 
 Requirements: DeepSeek Harness `0.2.2-rc.1` or a compatible `0.2.x`, Node.js `>= 24.9`, and the profile launcher (`dsh web` / the desktop app).
@@ -59,7 +75,17 @@ plugin_manager { "action": "install_bundle", "target": "/absolute/path/to/dsh-fa
 
 A linked install keeps the folder as the plugin body, so editing `client.js` or the Host files can be picked up by HMR / a page refresh. **Uninstall before deleting or moving the folder.**
 
-### Option B — tarball (standalone copy)
+### Option B — npm registry (for any DSH profile)
+
+The package is published on npm, so the DSH plugin CLI can install it directly:
+
+```bash
+dsh plugin --profile web add dsh-fallback-models
+```
+
+The CLI installs the package into that profile and activates it as a bundle layer. Restart `dsh web` / the desktop app if the running Host has not picked up the new profile composition.
+
+### Option C — tarball (standalone copy)
 
 ```bash
 npm pack

@@ -40,6 +40,22 @@ failover 引擎是注册在 `llm/stream` 瀑布上的监听器（`prepend: true`
 
 为什么挂在 LLM 边界而不是 `agent/request-error`：Agent loop 在一个 step 内固定 `ModelSelection`（`step()` 把 `decision.selection` 传给每一次重试），所以在 request-error 监听器里调用 `agent.model.select()` 无法改变它请求的那次重试所用的模型。`llm/stream` 是官方文档标注的路由缝隙（retry、replay、routing），且在 loop 记录请求之后运行。
 
+## 界面预览
+
+> 截图来自 DeepSeek Harness Web GUI。图片展示的是 v1.0.0 的全局配置页与模型选择卡片里的会话 fallback 页面。
+
+### 全局配置页
+
+![Fallback 模型设置页](docs/screenshots/settings-page.png)
+
+在「设置 → Fallback 模型」中维护全局默认链、开关、回退数量上限和跳过的错误码。
+
+### 模型选择卡片
+
+![模型选择卡片里的 Fallback 页面](docs/screenshots/model-menu.png)
+
+模型选择是唯一入口：卡片顶部的开关决定显示官方模型页还是 fallback 页面。开启后，列表第 1 个模型成为主模型，后续模型按顺序接管失败请求；右侧回转按钮把会话配置重置为全局配置。
+
 ## 安装
 
 要求：DeepSeek Harness `0.2.2-rc.1` 或兼容的 `0.2.x`、Node.js `>= 24.9`、profile 启动器（`dsh web` / 桌面端）。
@@ -59,7 +75,17 @@ plugin_manager { "action": "install_bundle", "target": "/absolute/path/to/dsh-fa
 
 链接安装时本体始终是这个文件夹，改 `client.js` 或 Host 文件后可被 HMR / 页面刷新拾取。**删除或移动文件夹前必须先卸载。**
 
-### 方式 B —— tarball（独立副本）
+### 方式 B —— npm 包（任意 profile）
+
+包已发布到 npm，可直接用 DSH 插件 CLI 安装：
+
+```bash
+dsh plugin --profile web add dsh-fallback-models
+```
+
+CLI 会把包安装到该 profile 并激活为 bundle layer。若当前 Host 还没重新读取 profile 组合，重启 `dsh web` / 桌面端即可。
+
+### 方式 C —— tarball（独立副本）
 
 ```bash
 npm pack

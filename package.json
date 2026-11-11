@@ -21,9 +21,9 @@
     "README.md",
     "README.zh.md",
     "INSTALL.md",
-    "CHANGELOG.md",
     "CONTRIBUTING.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "keywords": [
     "deepseek-harness",
