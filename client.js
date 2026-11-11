@@ -1052,11 +1052,20 @@ window.__ModuleLoader__.load({
      * @param {object} props slot props: provider/model/placement plus injected form and translator
      * @returns {object} inline label content
      */
-    function ModelLabel({ provider, model, placement, sessionId, form, t, getLocale }) {
+    function ModelLabel({ provider, model, placement, sessionId, form, t, getLocale, selectRoute }) {
       const snapshot = useFormSnapshot(form)
       const value = objectOf(snapshot.value)
       const session = readSession(value, sessionId)
       const effective = session ?? readGlobal(value)
+      const first = effective.enabled && effective.fallbacks.length > 0 ? effective.fallbacks[0] : undefined
+      // The first chain entry is the active primary. Align the shipped seat as
+      // soon as the trigger renders, so the outer name follows the chain even
+      // before the model menu is opened.
+      React.useEffect(() => {
+        if (placement !== 'trigger' || first === undefined) return
+        if (provider?.id === first.provider && model?.id === first.model) return
+        if (typeof selectRoute === 'function') selectRoute(sessionId, first)
+      }, [placement, sessionId, first?.provider, first?.model, first?.reasoningEffort, provider?.id, model?.id, selectRoute])
       const showIcon = placement !== 'option' && effective.enabled && effective.fallbacks.length > 0
       const badge = badgeTextOf(model?.badge, getLocale?.())
       const anchor =
@@ -1097,11 +1106,11 @@ window.__ModuleLoader__.load({
       /**
        * @param {object} input form, catalog store, translator
        */
-      constructor({ form, catalog, t, ctx }) {
+      constructor({ form, catalog, t, selectRouteFor }) {
         this.form = form
         this.catalog = catalog
         this.t = t
-        this.ctx = ctx
+        this.selectRouteFor = selectRouteFor
         this.alignedKey = null
         this.failedKey = null
         this.bodyObserver = null
@@ -1475,20 +1484,7 @@ window.__ModuleLoader__.load({
        */
       selectRoute(route) {
         if (route === undefined || this.state === null) return
-        const selectModel = this.ctx?.remote?.session?.selectModel
-        if (typeof selectModel !== 'function') return
-        const selection = {
-          sessionId: this.state.sessionId,
-          provider: route.provider,
-          model: route.model,
-          ...(route.reasoningEffort === undefined ? {} : { reasoningEffort: route.reasoningEffort }),
-        }
-        try {
-          selectModel(selection).catch(() => {})
-        } catch {
-          // A selection rejection is reported by the shipped seat; the model
-          // chain remains configurable even when this Session cannot switch.
-        }
+        this.selectRouteFor(this.state.sessionId, route)
       }
 
       /**
@@ -1517,32 +1513,9 @@ window.__ModuleLoader__.load({
         }
         if (this.alignedKey === key || this.failedKey === key) return
         this.alignedKey = key
-        const selectModel = this.ctx?.remote?.session?.selectModel
-        if (typeof selectModel !== 'function') return
-        const selection = {
-          sessionId: this.state.sessionId,
-          provider: first.provider,
-          model: first.model,
-          ...(first.reasoningEffort === undefined ? {} : { reasoningEffort: first.reasoningEffort }),
-        }
-        try {
-          selectModel(selection)
-            .then((result) => {
-              if (result === undefined || result.ok !== true) {
-                this.alignedKey = null
-                this.failedKey = key
-              } else {
-                this.failedKey = null
-              }
-            })
-            .catch(() => {
-              this.alignedKey = null
-              this.failedKey = key
-            })
-        } catch {
-          this.alignedKey = null
-          this.failedKey = key
-        }
+        if (typeof this.selectRouteFor !== 'function') return
+        this.selectRouteFor(this.state.sessionId, first)
+        this.failedKey = null
       }
 
       /**
@@ -1809,6 +1782,7 @@ window.__ModuleLoader__.load({
               form,
               catalog,
               t,
+              selectRoute: selectRouteFor,
               getLocale: () => {
                 try {
                   return ctx.locale.getSnapshot().active
@@ -1825,7 +1799,24 @@ window.__ModuleLoader__.load({
       // There is no slot for an extra row inside the model popup, so the row
       // and its pane are owned DOM nodes attached to the open menu. The model
       // selector stays the single entry point; no composer button is added.
-      const extension = new ModelMenuExtension({ form, catalog, t, ctx })
+      const selectRouteFor = (sessionId, route) => {
+        if (typeof sessionId !== 'string' || sessionId.length === 0) return
+        if (route === null || typeof route !== 'object') return
+        const selectModel = ctx.remote?.session?.selectModel
+        if (typeof selectModel !== 'function') return
+        try {
+          selectModel({
+            sessionId,
+            provider: route.provider,
+            model: route.model,
+            ...(route.reasoningEffort === undefined ? {} : { reasoningEffort: route.reasoningEffort }),
+          }).catch(() => {})
+        } catch {
+          // A selection rejection is reported by the shipped seat; the chain
+          // remains configurable even when this Session cannot switch.
+        }
+      }
+      const extension = new ModelMenuExtension({ form, catalog, t, selectRouteFor })
       ctx.effect(() => {
         extension.start()
         return () => extension.stop()

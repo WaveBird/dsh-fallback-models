@@ -114,7 +114,7 @@ The Host row is the settings namespace and stores both layers:
 
 When a Session has fallback enabled and a non-empty list, the plugin treats the **first entry as the active model**:
 
-1. Enabling the switch, adding the first model, or reordering the list selects that first route through the shipped `session.selectModel` Remote. The outer model name follows immediately, and the Agent loop's next request uses that route as its normal primary request.
+1. Enabling the switch, adding the first model, reordering the list, or rendering the composer after a reload selects that first route through the shipped `session.selectModel` Remote. The outer model name follows, and the Agent loop's next request uses that route as its normal primary request. An existing session whose selection predates the chain therefore self-heals on the next page load.
 2. The remaining entries are fallbacks, tried in order after the primary fails before output.
 3. Turning the switch off restores the model that was selected before fallback was enabled (`base` in the Session override). **Reset to global** removes the override; a globally enabled chain then selects the global first entry, while a disabled global chain restores `base`.
 

@@ -94,7 +94,7 @@ The product model the UI exposes is a single ordered list: the first entry is th
 
 The client aligns the two views through `session.selectModel`:
 
-- Enabling fallback, adding the first route, or reordering the list selects the first route through the Session Remote.
+- Enabling fallback, adding the first route, reordering the list, or rendering the composer trigger selects the first route through the Session Remote. The trigger effect is what makes an older session self-heal on the next page load.
 - The outer model name is rendered by the shipped seat, so it follows the selection without a custom label override.
 - The Session override stores `base`, the selection captured when fallback was enabled. Switching off restores it; resetting to global either selects the global first route (global enabled) or restores `base`.
 - If selection fails (unavailable route, writer conflict), the old selection remains the primary and the configured first entry is simply the first fallback. The editor keeps the configured order.
