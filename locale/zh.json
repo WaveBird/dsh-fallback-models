@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Fallback 模型",
+    "description": "为模型请求配置全局 fallback 链，并支持每个会话单独覆盖。"
+  }
+}

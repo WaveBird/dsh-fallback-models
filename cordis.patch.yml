@@ -1,0 +1,11 @@
+# The fallback-models bundle patch over the shipped composition: one Host row
+# for the package. The row owns the Config schema (global defaults plus the
+# per-Session overrides) and the `llm/stream` failover listener; the package's
+# `dsh.client` declaration serves the browser half (settings page and composer
+# menu).
+#
+# Keep the id stable: it is the settings namespace the browser half follows and
+# the entry id its Config form edits.
+- insert:
+    - id: fallback-models
+      name: 'dsh-fallback-models'

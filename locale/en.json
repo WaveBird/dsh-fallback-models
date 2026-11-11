@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Fallback models",
+    "description": "A global failover chain for model requests, with per-Session overrides."
+  }
+}
