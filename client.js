@@ -45,12 +45,12 @@ window.__ModuleLoader__.load({
       'settings.nav': 'Fallback 模型',
       'settings.title': 'Fallback 模型',
       'settings.description':
-        '当所选模型请求失败时，按顺序尝试备用模型。这里的配置是全局默认值；每个会话可在作曲器模型选择器旁的按钮中加载并单独调整。',
+        '启用 fallback 后，列表第 1 个模型作为主模型，后续模型按顺序接管失败的请求。这里的配置是全局默认值；每个会话可在模型选择卡片中单独覆盖。',
       'settings.enabled': '启用 fallback',
       'settings.enabledHint': '关闭后所有会话都不再尝试备用模型，除非会话自己启用了覆盖配置。',
       'settings.chain': '全局 fallback 链',
-      'settings.chainHint': '按列表顺序尝试；同一个 provider/model 只尝试一次；失败的请求在产生任何输出前才会切换。',
-      'settings.empty': '还没有配置 fallback 模型。',
+      'settings.chainHint': '第 1 个模型是主模型，后续按顺序 fallback；同一个 provider/model 只尝试一次；只在产生任何输出前切换。',
+      'settings.empty': '还没有配置 fallback 模型；第 1 个添加的模型会成为主模型。',
       'settings.add': '添加模型',
       'settings.addUnavailable': '模型目录中没有可添加的模型。',
       'settings.manualProvider': 'provider',
@@ -66,7 +66,7 @@ window.__ModuleLoader__.load({
       'settings.remove': '移除',
       'settings.advanced': '高级',
       'settings.maxFallbacks': '单次请求最多尝试的 fallback 数量',
-      'settings.maxFallbacksHint': '1–10；只统计所选模型之后的备用模型。',
+      'settings.maxFallbacksHint': '1–10；只统计第 1 个主模型之后的备用模型。',
       'settings.skipCodes': '不触发 fallback 的错误码',
       'settings.skipCodesHint': '逗号分隔；留空表示所有错误都切换。默认跳过 IMAGE_OFFLOAD_REQUIRED，把图片卸载恢复留给原插件。',
       'settings.saving': '保存中…',
@@ -81,18 +81,16 @@ window.__ModuleLoader__.load({
       'menu.title': 'Fallback 模型',
       'menu.aria': 'Fallback 模型配置',
       'menu.off': '已关闭',
-      'menu.globalNote': '当前使用全局配置',
-      'menu.customNote': '本会话自定义配置',
       'menu.followGlobal': '跟随全局',
       'menu.session': '本会话',
       'menu.enabled': '启用 fallback',
-      'menu.empty': '本会话没有 fallback 模型。',
+      'menu.empty': '本会话没有 fallback 模型；第 1 个添加的模型会成为主模型。',
       'menu.addModel': '添加模型',
       'menu.add': '添加',
       'menu.pickModel': '选择模型',
       'menu.noModels': '没有更多可添加的模型。',
       'menu.resetGlobal': '重置为全局',
-      'menu.hint': '默认使用全局配置；编辑任意项会保存为本会话自定义配置，可用「重置为全局」恢复。',
+      'menu.hint': '第 1 个模型是当前主模型，后续按顺序 fallback。默认使用全局配置；编辑会保存为本会话自定义配置，可用「重置为全局」恢复；关闭开关会恢复开启前的模型。',
       'menu.close': '关闭',
       'menu.saving': '保存中…',
       'menu.saved': '已保存',
@@ -110,13 +108,13 @@ window.__ModuleLoader__.load({
       'settings.nav': 'Fallback models',
       'settings.title': 'Fallback models',
       'settings.description':
-        'Try backup models in order when the selected model fails. This page is the global default; each Session can load it from the button beside the composer’s model selector and then edit its own copy.',
+        'When fallback is on, the first model in the list is the primary and later models take over a failed request in order. This page is the global default; each Session can override it from the model selection card.',
       'settings.enabled': 'Enable fallback',
       'settings.enabledHint': 'When off, no Session tries a backup model unless it carries its own enabled override.',
       'settings.chain': 'Global fallback chain',
       'settings.chainHint':
-        'Tried in list order. A provider/model pair is tried once. Failover happens only before any output reaches the conversation.',
-      'settings.empty': 'No fallback models configured yet.',
+        'The first model is the primary; later models are fallbacks in order. A provider/model pair is tried once, and failover happens only before any output reaches the conversation.',
+      'settings.empty': 'No fallback models configured yet; the first one added becomes the primary.',
       'settings.add': 'Add model',
       'settings.addUnavailable': 'The model catalog has no model left to add.',
       'settings.manualProvider': 'provider',
@@ -132,7 +130,7 @@ window.__ModuleLoader__.load({
       'settings.remove': 'Remove',
       'settings.advanced': 'Advanced',
       'settings.maxFallbacks': 'Fallbacks attempted per request',
-      'settings.maxFallbacksHint': '1–10. Counts only backup routes after the selected model.',
+      'settings.maxFallbacksHint': '1–10. Counts only backup routes after the first primary model.',
       'settings.skipCodes': 'Failure codes that never fail over',
       'settings.skipCodesHint':
         'Comma-separated. Empty means every error fails over. IMAGE_OFFLOAD_REQUIRED is skipped by default so the image-offload recovery keeps ownership.',
@@ -149,18 +147,16 @@ window.__ModuleLoader__.load({
       'menu.title': 'Fallback models',
       'menu.aria': 'Fallback model configuration',
       'menu.off': 'Off',
-      'menu.globalNote': 'Using the global configuration',
-      'menu.customNote': 'Custom for this Session',
       'menu.followGlobal': 'Following global',
       'menu.session': 'This Session',
       'menu.enabled': 'Enable fallback',
-      'menu.empty': 'This Session has no fallback models.',
+      'menu.empty': 'This Session has no fallback models; the first one added becomes the primary.',
       'menu.addModel': 'Add model',
       'menu.add': 'Add',
       'menu.pickModel': 'Choose a model',
       'menu.noModels': 'No model left to add.',
       'menu.resetGlobal': 'Reset to global',
-      'menu.hint': 'The global configuration is used until you edit something; edits become a custom Session configuration, and Reset to global removes it.',
+      'menu.hint': 'The first model is the current primary; later models are fallbacks in order. The global configuration is used until you edit something; edits become a custom Session configuration, Reset to global removes it, and switching fallback off restores the model selected before it was enabled.',
       'menu.close': 'Close',
       'menu.saving': 'Saving…',
       'menu.saved': 'Saved',
@@ -292,7 +288,8 @@ window.__ModuleLoader__.load({
       if (typeof sessionId !== 'string' || sessionId.length === 0) return undefined
       const entry = objectOf(sessions)[sessionId]
       if (entry === undefined || entry === null || typeof entry !== 'object' || Array.isArray(entry)) return undefined
-      return { enabled: entry.enabled !== false, fallbacks: readRoutes(entry) }
+      const base = readRoute(entry.base)
+      return { enabled: entry.enabled !== false, fallbacks: readRoutes(entry), ...(base === undefined ? {} : { base }) }
     }
 
     /**
@@ -920,9 +917,14 @@ window.__ModuleLoader__.load({
       /** The layer an edit starts from: the Session copy, or a copy of the global chain. */
       const materialize = () => {
         const current = live()
-        return current.session !== undefined
-          ? { enabled: current.session.enabled, fallbacks: cloneRoutes(current.session.fallbacks) }
-          : { enabled: current.global.enabled, fallbacks: cloneRoutes(current.global.fallbacks) }
+        if (current.session !== undefined) {
+          return {
+            enabled: current.session.enabled,
+            fallbacks: cloneRoutes(current.session.fallbacks),
+            ...(current.session.base === undefined ? {} : { base: current.session.base }),
+          }
+        }
+        return { enabled: current.global.enabled, fallbacks: cloneRoutes(current.global.fallbacks) }
       }
       const writeSession = (next) =>
         run(() =>
@@ -940,11 +942,11 @@ window.__ModuleLoader__.load({
         if (decoded === undefined) return
         const base = materialize()
         if (base.fallbacks.some((route) => routeKey(route) === routeKey(decoded))) return
-        writeSession({ enabled: base.enabled, fallbacks: [...base.fallbacks, decoded] })
+        writeSession({ ...base, fallbacks: [...base.fallbacks, decoded] })
       }
       const remove = (index) => {
         const base = materialize()
-        writeSession({ enabled: base.enabled, fallbacks: base.fallbacks.filter((_, position) => position !== index) })
+        writeSession({ ...base, fallbacks: base.fallbacks.filter((_, position) => position !== index) })
       }
       const move = (index, delta) => {
         const base = materialize()
@@ -1050,7 +1052,7 @@ window.__ModuleLoader__.load({
      * @param {object} props slot props: provider/model/placement plus injected form and translator
      * @returns {object} inline label content
      */
-    function ModelLabel({ model, placement, sessionId, form, t, getLocale }) {
+    function ModelLabel({ provider, model, placement, sessionId, form, t, getLocale }) {
       const snapshot = useFormSnapshot(form)
       const value = objectOf(snapshot.value)
       const session = readSession(value, sessionId)
@@ -1062,6 +1064,8 @@ window.__ModuleLoader__.load({
           ? {
               'data-fm-model-anchor': 'trigger',
               'data-fm-session-id': typeof sessionId === 'string' ? sessionId : '',
+              'data-fm-current-provider': typeof provider?.id === 'string' ? provider.id : '',
+              'data-fm-current-model': typeof model?.id === 'string' ? model.id : '',
             }
           : null
       return h(
@@ -1093,10 +1097,13 @@ window.__ModuleLoader__.load({
       /**
        * @param {object} input form, catalog store, translator
        */
-      constructor({ form, catalog, t }) {
+      constructor({ form, catalog, t, ctx }) {
         this.form = form
         this.catalog = catalog
         this.t = t
+        this.ctx = ctx
+        this.alignedKey = null
+        this.failedKey = null
         this.bodyObserver = null
         this.triggerObserver = null
         this.menuObserver = null
@@ -1258,6 +1265,7 @@ window.__ModuleLoader__.load({
             trigger,
             menu,
             sessionId,
+            anchor,
             shell: null,
             bar: null,
             reset: null,
@@ -1268,6 +1276,7 @@ window.__ModuleLoader__.load({
             onKeyDown: null,
           }
         }
+        this.state.anchor = anchor
         if (this.state.pane !== null && !this.state.pane.isConnected) this.closePane()
         this.ensureShell()
         this.syncPane()
@@ -1392,19 +1401,32 @@ window.__ModuleLoader__.load({
         const value = objectOf(snapshot.value)
         const global = readGlobal(value)
         const session = readSession(value, this.state.sessionId)
-        const base = session ?? { enabled: global.enabled, fallbacks: cloneRoutes(global.fallbacks) }
-        const next = { enabled: base.enabled !== true, fallbacks: cloneRoutes(base.fallbacks) }
+        const current = session ?? { enabled: global.enabled, fallbacks: cloneRoutes(global.fallbacks) }
+        const nextEnabled = current.enabled !== true
+        const selection = this.currentSelection()
+        const next = { enabled: nextEnabled, fallbacks: cloneRoutes(current.fallbacks) }
+        // Remember the pre-fallback selection so switching back off restores it.
+        // Re-enabling captures whatever is selected now, even if an earlier
+        // override still carries a stale base; disabling keeps the captured one.
+        if (nextEnabled) {
+          if (selection !== undefined) next.base = selection
+          else if (current.base !== undefined) next.base = current.base
+        } else if (current.base !== undefined) {
+          next.base = current.base
+        } else if (selection !== undefined) {
+          next.base = selection
+        }
         this.writing = true
         this.form
           .mutate([{ op: 'set', path: ['sessions', this.state.sessionId], value: next }])
           .then((accepted) => {
             this.writing = false
-            if (accepted !== true) {
-              // A refused write (read-only document, concurrent edit) must not
-              // flip the local reading; the mirror refresh re-reads the Host.
-              this.schedule()
-              return
+            if (accepted === true) {
+              this.alignedKey = null
+              if (!nextEnabled) this.selectRoute(next.base)
             }
+            // A refused write (read-only document, concurrent edit) must not
+            // flip the local reading; the mirror refresh re-reads the Host.
             this.schedule()
           })
           .catch(() => {
@@ -1418,9 +1440,109 @@ window.__ModuleLoader__.load({
         if (this.state === null) return
         const snapshot = this.form.getSnapshot()
         if (snapshot.status !== 'ready' || snapshot.writable === false) return
+        const value = objectOf(snapshot.value)
+        const session = readSession(value, this.state.sessionId)
+        const global = readGlobal(value)
+        const base = session?.base
         this.form
           .mutate([{ op: 'unset', path: ['sessions', this.state.sessionId] }])
-          .finally(() => this.schedule())
+          .then((accepted) => {
+            if (accepted === true) {
+              this.alignedKey = null
+              if (global.enabled && global.fallbacks.length > 0) this.selectRoute(global.fallbacks[0])
+              else if (base !== undefined) this.selectRoute(base)
+            }
+            this.schedule()
+          })
+          .catch(() => this.schedule())
+      }
+
+      /** The model currently selected in the shipped seat, from the label anchor. */
+      currentSelection() {
+        const anchor = this.state?.anchor
+        const provider = anchor?.getAttribute('data-fm-current-provider')
+        const model = anchor?.getAttribute('data-fm-current-model')
+        if (typeof provider !== 'string' || provider.length === 0) return undefined
+        if (typeof model !== 'string' || model.length === 0) return undefined
+        return { provider, model }
+      }
+
+      /**
+       * Select one route through the session Remote. The shipped seat owns the
+       * display, so this is what makes the outer model name follow the chain's
+       * first entry instead of only changing our card.
+       * @param {{provider: string, model: string, reasoningEffort?: string} | undefined} route route to select
+       */
+      selectRoute(route) {
+        if (route === undefined || this.state === null) return
+        const selectModel = this.ctx?.remote?.session?.selectModel
+        if (typeof selectModel !== 'function') return
+        const selection = {
+          sessionId: this.state.sessionId,
+          provider: route.provider,
+          model: route.model,
+          ...(route.reasoningEffort === undefined ? {} : { reasoningEffort: route.reasoningEffort }),
+        }
+        try {
+          selectModel(selection).catch(() => {})
+        } catch {
+          // A selection rejection is reported by the shipped seat; the model
+          // chain remains configurable even when this Session cannot switch.
+        }
+      }
+
+      /**
+       * When fallback is enabled, the first chain entry is the active model.
+       * Align the session selection with it so the outer name, the request, and
+       * the chain all agree. The shipped `llm/stream` primary attempt then uses
+       * that route through the normal waterfall; the remaining entries stay
+       * fallbacks.
+       */
+      alignToChain() {
+        if (this.state === null) return
+        const value = objectOf(this.form.getSnapshot().value)
+        const session = readSession(value, this.state.sessionId)
+        const effective = session ?? readGlobal(value)
+        if (!effective.enabled || effective.fallbacks.length === 0) {
+          this.alignedKey = null
+          this.failedKey = null
+          return
+        }
+        const first = effective.fallbacks[0]
+        const key = `${this.state.sessionId}:${routeKey(first)}`
+        const current = this.currentSelection()
+        if (current !== undefined && current.provider === first.provider && current.model === first.model) {
+          this.alignedKey = key
+          return
+        }
+        if (this.alignedKey === key || this.failedKey === key) return
+        this.alignedKey = key
+        const selectModel = this.ctx?.remote?.session?.selectModel
+        if (typeof selectModel !== 'function') return
+        const selection = {
+          sessionId: this.state.sessionId,
+          provider: first.provider,
+          model: first.model,
+          ...(first.reasoningEffort === undefined ? {} : { reasoningEffort: first.reasoningEffort }),
+        }
+        try {
+          selectModel(selection)
+            .then((result) => {
+              if (result === undefined || result.ok !== true) {
+                this.alignedKey = null
+                this.failedKey = key
+              } else {
+                this.failedKey = null
+              }
+            })
+            .catch(() => {
+              this.alignedKey = null
+              this.failedKey = key
+            })
+        } catch {
+          this.alignedKey = null
+          this.failedKey = key
+        }
       }
 
       /**
@@ -1434,8 +1556,10 @@ window.__ModuleLoader__.load({
         const effective = session ?? readGlobal(value)
         if (effective.enabled) {
           if (this.state.pane === null) this.openPane()
-        } else if (this.state.pane !== null) {
-          this.closePane()
+          this.alignToChain()
+        } else {
+          this.alignedKey = null
+          if (this.state.pane !== null) this.closePane()
         }
       }
 
@@ -1701,7 +1825,7 @@ window.__ModuleLoader__.load({
       // There is no slot for an extra row inside the model popup, so the row
       // and its pane are owned DOM nodes attached to the open menu. The model
       // selector stays the single entry point; no composer button is added.
-      const extension = new ModelMenuExtension({ form, catalog, t })
+      const extension = new ModelMenuExtension({ form, catalog, t, ctx })
       ctx.effect(() => {
         extension.start()
         return () => extension.stop()

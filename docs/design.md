@@ -88,6 +88,19 @@ budget     = min(maxFallbacks, candidates.length - 1)
 - `maxFallbacks` is a count of backup routes attempted, not of prepared calls. An unavailable route still consumes a slot, so a long list of broken routes cannot make one request unbounded.
 - A skipped route (`skipCodes`) does not consume a slot; the failure is terminal.
 
+## The first entry is the primary
+
+The product model the UI exposes is a single ordered list: the first entry is the active model, and later entries are fallbacks. The Host engine still sees a normal `llm/stream` primary request plus a fallback list, so the shipped waterfall (checkpoint, replay, title observers) is preserved.
+
+The client aligns the two views through `session.selectModel`:
+
+- Enabling fallback, adding the first route, or reordering the list selects the first route through the Session Remote.
+- The outer model name is rendered by the shipped seat, so it follows the selection without a custom label override.
+- The Session override stores `base`, the selection captured when fallback was enabled. Switching off restores it; resetting to global either selects the global first route (global enabled) or restores `base`.
+- If selection fails (unavailable route, writer conflict), the old selection remains the primary and the configured first entry is simply the first fallback. The editor keeps the configured order.
+
+This keeps the first attempt on the normal `next()` path instead of dispatching a prepared fallback as the first attempt, which would bypass downstream `llm/stream` listeners such as the checkpoint policy.
+
 ## Configuration storage
 
 The Host row's `Config` is the durable store for both layers:

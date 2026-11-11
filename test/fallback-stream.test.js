@@ -8,7 +8,7 @@ import {
   prepareFallbackStream,
   runFallback,
 } from '../lib/fallback-stream.js'
-import { Config, dedupeRoutes, readGlobal, resolveChain } from '../lib/config.js'
+import { Config, dedupeRoutes, readGlobal, readSessionOverrides, resolveChain } from '../lib/config.js'
 
 /** Build an async iterable from a chunk list. */
 async function* fromChunks(chunks) {
@@ -376,6 +376,26 @@ test('config defaults, normalization and session resolution', () => {
   const unknown = resolveChain(config, 'session-unknown')
   assert.equal(unknown.source, 'global')
   assert.deepEqual(unknown.fallbacks, global.fallbacks)
+})
+
+test('session overrides accept the base selection and keep it out of the chain', () => {
+  const config = Config({
+    sessions: {
+      withBase: {
+        enabled: true,
+        fallbacks: [{ provider: 'backup', model: 'alt' }],
+        base: { provider: 'primary', model: 'main', reasoningEffort: 'high' },
+      },
+      withoutBase: { enabled: false, fallbacks: [] },
+    },
+  })
+  const overrides = readSessionOverrides(config)
+  assert.deepEqual(overrides.get('withBase'), {
+    enabled: true,
+    fallbacks: [{ provider: 'backup', model: 'alt' }],
+  })
+  assert.deepEqual(overrides.get('withoutBase'), { enabled: false, fallbacks: [] })
+  assert.equal(resolveChain(config, 'withBase').fallbacks.length, 1)
 })
 
 test('dedupeRoutes keeps the first effort for a repeated route', () => {

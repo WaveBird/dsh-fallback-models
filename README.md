@@ -13,8 +13,8 @@ No build step. The Host half is plain ESM; the browser half is one hand-written 
 
 ## Features
 
-- Multiple fallback models, tried in order.
-- Global defaults plus a per-Session override: the session follows the global configuration until an edit makes it custom, and a reset button restores it.
+- Multiple fallback models, tried in order. When fallback is on, the **first entry is the primary model**; later entries take over a failed request.
+- Global defaults plus a per-Session override: the session follows the global configuration until an edit makes it custom, and a reset button restores it. Turning fallback off restores the model selected before it was enabled.
 - A dedicated settings page (not only a raw config form).
 - A composer entry next to the model selector, for the current Session.
 - Safe failover: only before any content reaches the conversation; never on cancellation; configurable error-code exceptions.
@@ -105,10 +105,20 @@ The Host row is the settings namespace and stores both layers:
 | Field | Meaning |
 |---|---|
 | `enabled` | Global switch. A Session override carries its own switch. |
-| `fallbacks` | Ordered global routes: `{ provider, model, reasoningEffort? }`. |
+| `fallbacks` | Ordered global model list: `{ provider, model, reasoningEffort? }`. The first entry is the primary when fallback is enabled; the rest are fallbacks. |
 | `maxFallbacks` | Maximum backup routes attempted for one request (1–10). |
 | `skipCodes` | Failure codes that never fail over. Empty means every error fails over. Default: `IMAGE_OFFLOAD_REQUIRED`, so the image-offload recovery keeps ownership. |
 | `sessions` | Per-Session overrides keyed by Session id. An absent key follows the global chain. |
+
+### The first entry is the primary
+
+When a Session has fallback enabled and a non-empty list, the plugin treats the **first entry as the active model**:
+
+1. Enabling the switch, adding the first model, or reordering the list selects that first route through the shipped `session.selectModel` Remote. The outer model name follows immediately, and the Agent loop's next request uses that route as its normal primary request.
+2. The remaining entries are fallbacks, tried in order after the primary fails before output.
+3. Turning the switch off restores the model that was selected before fallback was enabled (`base` in the Session override). **Reset to global** removes the override; a globally enabled chain then selects the global first entry, while a disabled global chain restores `base`.
+
+If the route cannot be selected (unavailable model, writer conflict), the selection is left unchanged; the chain stays configured and the first entry remains a fallback after the currently selected model. The fallback editor still shows the configured order.
 
 ### Session override semantics
 
@@ -123,7 +133,7 @@ Per-Session overrides live in the profile patch, so they are shared by every bro
 
 - **Only a failure before output fails over.** A provider error after content has streamed is surfaced, because replaying the request would duplicate an answer the user already saw.
 - **Cancellation is never failed over.** An `aborted` finish and an aborted request signal end the chain immediately.
-- **The selected route stays selected.** The Agent loop logs `assistant/message.source` as the route it assembled. The actual fallback route is recorded in the adapter's `replayState.response` (for adapters that report provider/model there) and in the Host warning log; the transcript's model label is not rewritten. This is a deliberate consequence of the `llm/stream` seam and is the main transparency limitation in 1.0.
+- **The logged source is the selected route.** The Agent loop logs `assistant/message.source` as the route it assembled. With fallback on, the plugin selects the chain's first entry as the session model, so the logged source normally matches the active primary. A later fallback is recorded in the adapter's `replayState.response` (for adapters that report provider/model there) and in the Host warning log; the transcript's model label is not rewritten per attempt. If the alignment Remote fails, the old selection remains the logged primary while the configured first entry is a fallback.
 - **Provider retries happen first for the primary.** Because the fallback happens inside `llm/stream`, the primary's `llm-retry` policy does not see a failure that a fallback absorbed. If every fallback fails, the last failure reaches `agent/request-error` and the retry policy applies to the primary route.
 - **Catalog membership is advisory.** A configured route is attempted even if the catalog no longer lists it; an unavailable adapter or model is skipped, and the next route is tried.
 - **Hand-built calls without a `sessionId` are untouched.** The engine only reads a chain for a Session-bound request; auxiliary one-shot callers that pass no Session id keep their existing behavior.
