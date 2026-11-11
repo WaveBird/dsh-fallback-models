@@ -67,5 +67,9 @@
   "bugs": {
     "url": "https://github.com/WaveBird/dsh-fallback-models/issues"
   },
-  "homepage": "https://github.com/WaveBird/dsh-fallback-models#readme"
+  "homepage": "https://github.com/WaveBird/dsh-fallback-models#readme",
+  "author": {
+    "name": "WaveBird",
+    "url": "https://github.com/WaveBird"
+  }
 }
