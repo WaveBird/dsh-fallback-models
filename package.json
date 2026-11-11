@@ -1,6 +1,6 @@
 {
   "name": "dsh-fallback-models",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fallback models for DeepSeek Harness: a global failover chain and a per-Session override, with a settings page and a composer menu.",
   "type": "module",
   "license": "MIT",
