@@ -47,7 +47,7 @@ function createDocumentStub() {
   }
 }
 
-test('client module registers both surfaces', async () => {
+test('client module registers settings page, icon, and model label', async () => {
   const registrations = []
   const slots = []
   const watched = []
@@ -65,6 +65,7 @@ test('client module registers both surfaces', async () => {
   // The model-menu extension is a browser-only surface; the smoke test covers
   // registration, not DOM mutation.
   globalThis.MutationObserver = undefined
+  globalThis.requestAnimationFrame = (fn) => fn()
 
   await import('../client.js')
   assert.equal(typeof capturedFactory, 'function')

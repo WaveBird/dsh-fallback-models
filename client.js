@@ -1240,9 +1240,13 @@ window.__ModuleLoader__.load({
         if (this.state !== null && (this.state.menu !== menu || this.state.trigger !== trigger || this.state.sessionId !== sessionId)) {
           this.cleanup()
         }
-        const isRoot =
-          menu.getAttribute('role') === 'menu' &&
-          menu.querySelectorAll(':scope > button[role="menuitem"]').length === 2
+        // Root pane vs drill-in: the shipped card keeps role="menu" at the top
+        // level and switches to role="group" while a sub-pane (model list,
+        // effort list) is open. Row count is deliberately not a signal: a model
+        // without reasoning metadata renders only the model row, and small
+        // catalogs hide the search field, so a fixed count would skip valid
+        // root cards.
+        const isRoot = menu.getAttribute('role') === 'menu'
         if (!isRoot) {
           // The user drilled into models or effort; the switch strip does not
           // belong to that pane. The observer reattaches it on the way back.
