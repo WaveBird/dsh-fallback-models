@@ -22,6 +22,7 @@
     "README.zh.md",
     "INSTALL.md",
     "CHANGELOG.md",
+    "CONTRIBUTING.md",
     "LICENSE"
   ],
   "keywords": [
@@ -58,5 +59,13 @@
         "@deepseek-ai/dsh-client-ui-settings"
       ]
     }
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WaveBird/dsh-fallback-models.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WaveBird/dsh-fallback-models/issues"
+  },
+  "homepage": "https://github.com/WaveBird/dsh-fallback-models#readme"
 }

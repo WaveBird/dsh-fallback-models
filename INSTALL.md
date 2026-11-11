@@ -89,7 +89,7 @@ cordis_inspect_query {
 
 1. 在设置页配置全局 fallback 为可用路由。
 2. 临时把主 provider 的 API 地址改成一个不可达端口，例如：
-   - 设置 → 模型 → DeepSeek → 编辑 → 自定义设置 → API 地址 → `http://127.0.0.1:9/` → 保存。
+   - 设置 → 模型 → 编辑主 provider → 自定义设置 → API 地址改成任意不可达地址（例如 `http://127.0.0.1:9/`）→ 保存。
    - 注意：这会改动当前 profile 的 provider 配置，验收完必须改回原值。
 3. 新建/进入一个会话，模型选择器选到该 provider 的模型，发送一句简单提示。
 4. 预期：对话正常得到回答，说明主 provider 失败后由 fallback 接管。
@@ -105,7 +105,7 @@ cordis_inspect_query {
 }
 ```
 
-6. **立即恢复**主 provider 的 API 地址（例如 `http://127.0.0.1:7864/`），保存并确认设置页显示“已保存”。
+6. **立即恢复**主 provider 原来的 API 地址，保存并确认设置页显示“已保存”。
 
 说明：对话里的模型标签仍然是所选主模型，这是 `llm/stream` 缝隙的已知限制；实际回退路由以上面的 `replayState.response` 和 Host 警告日志为准。
 
