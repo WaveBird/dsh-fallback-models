@@ -17,7 +17,13 @@
 dsh plugin --profile web add dsh-fallback-models
 ```
 
-CLI 会安装 npm 包、写入 profile 依赖，并把 `dsh-fallback-models` 加入 `dsh.profile.bundles`。若当前 Host 尚未重新读取组合，重启 `dsh web` / 桌面端。
+CLI 会安装 npm 包、写入 profile 依赖，并把 `dsh-fallback-models` 加入 `dsh.profile.bundles`（已在本机用干净的 `cli-verify` profile 实测通过）。若当前 Host 尚未重新读取组合，重启 `dsh web` / 桌面端。
+
+卸载：
+
+```bash
+dsh plugin --profile web remove dsh-fallback-models
+```
 
 ### A. 文件夹链接（开发模式）
 

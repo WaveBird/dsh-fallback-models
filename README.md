@@ -83,7 +83,7 @@ The package is published on npm, so the DSH plugin CLI can install it directly:
 dsh plugin --profile web add dsh-fallback-models
 ```
 
-The CLI installs the package into that profile and activates it as a bundle layer. Restart `dsh web` / the desktop app if the running Host has not picked up the new profile composition.
+The CLI installs the package into that profile, adds it to `dsh.profile.bundles`, and activates the bundle layer (verified with a clean profile on 1.0.0). Restart `dsh web` / the desktop app if the running Host has not picked up the new profile composition. Remove it with `dsh plugin --profile web remove dsh-fallback-models`.
 
 ### Option C — tarball (standalone copy)
 

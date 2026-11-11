@@ -83,7 +83,7 @@ plugin_manager { "action": "install_bundle", "target": "/absolute/path/to/dsh-fa
 dsh plugin --profile web add dsh-fallback-models
 ```
 
-CLI 会把包安装到该 profile 并激活为 bundle layer。若当前 Host 还没重新读取 profile 组合，重启 `dsh web` / 桌面端即可。
+CLI 会把包安装到该 profile、写入 `dsh.profile.bundles` 并激活 bundle layer（1.0.0 已在干净 profile 实测）。若当前 Host 还没重新读取 profile 组合，重启 `dsh web` / 桌面端即可。卸载：`dsh plugin --profile web remove dsh-fallback-models`。
 
 ### 方式 C —— tarball（独立副本）
 
